@@ -12,6 +12,19 @@
 namespace open3d {
 namespace tests {
 
+TEST(IntersectionTest, TriangleTriangle3dNearCoplanar) {
+    Eigen::Vector3d p0(0.0, 0.13918686, 1.0);
+    Eigen::Vector3d p1(0.0, 0.0, 1.1270161);
+    Eigen::Vector3d p2(1.0, 0.0, 1.0284119);
+    Eigen::Vector3d q0(1.0, 1.1269569, 0.0);
+    Eigen::Vector3d q1(1.0, 0.03113556, 1.0);
+    Eigen::Vector3d q2(2.0, 1.0189056, 0.0);
+
+    EXPECT_FALSE(
+            geometry::IntersectionTest::TriangleTriangle3d(p0, p1, p2, q0, q1,
+                                                           q2));
+}
+
 TEST(IntersectionTest, PointsCoplanar) {
     Eigen::Vector3d p0(0, 0, 0);
     Eigen::Vector3d p1(1, 0, 0);
