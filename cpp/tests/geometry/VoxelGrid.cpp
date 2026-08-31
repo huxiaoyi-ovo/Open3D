@@ -8,6 +8,7 @@
 #include "open3d/geometry/VoxelGrid.h"
 
 #include "open3d/geometry/LineSet.h"
+#include "open3d/geometry/Octree.h"
 #include "open3d/geometry/PointCloud.h"
 #include "open3d/geometry/TriangleMesh.h"
 #include "open3d/io/PointCloudIO.h"
@@ -43,6 +44,22 @@ TEST(VoxelGrid, GetVoxel) {
              Eigen::Vector3i(0, 1, 0));
     ExpectEQ(voxel_grid->GetVoxel(Eigen::Vector3d(0, 5.1, 0)),
              Eigen::Vector3i(0, 1, 0));
+}
+
+TEST(VoxelGrid, CreateFromOctreeInitializesVoxelSize) {
+    geometry::PointCloud point_cloud;
+    point_cloud.points_ = {
+            Eigen::Vector3d(0.0, 0.0, 0.0), Eigen::Vector3d(0.0, 0.0, 1.0),
+            Eigen::Vector3d(0.0, 1.0, 0.0), Eigen::Vector3d(1.0, 0.0, 0.0)};
+
+    geometry::Octree octree(2);
+    octree.ConvertFromPointCloud(point_cloud);
+
+    geometry::VoxelGrid voxel_grid;
+    voxel_grid.CreateFromOctree(octree);
+
+    EXPECT_NEAR(voxel_grid.voxel_size_, octree.size_ / 4.0, 1e-12);
+    EXPECT_EQ(voxel_grid.voxels_.size(), point_cloud.points_.size());
 }
 
 TEST(VoxelGrid, Visualization) {
