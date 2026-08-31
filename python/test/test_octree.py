@@ -122,6 +122,19 @@ def test_octree_voxel_grid_convert():
     # o3d.visualization.draw_geometries([octree_copy])
 
 
+def test_octree_voxel_grid_convert_preserves_leaves():
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(_eight_cubes_points)
+    pcd.colors = o3d.utility.Vector3dVector(_eight_cubes_colors)
+
+    octree = o3d.geometry.Octree(1)
+    octree.convert_from_point_cloud(pcd)
+    voxel_grid = octree.to_voxel_grid()
+
+    np.testing.assert_allclose(voxel_grid.voxel_size, octree.size / 2.0)
+    assert len(voxel_grid.get_voxels()) == len(_eight_cubes_points)
+
+
 def test_locate_leaf_node():
     pcd_data = o3d.data.PLYPointCloud()
     pcd = o3d.io.read_point_cloud(pcd_data.path)
